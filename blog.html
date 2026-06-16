@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuponiza | As Melhores Promoções</title>
+    
+    <!-- Tailwind CSS para Estilização -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Configuração das cores da sua Logo -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#8A32F3',   /* Roxo da logo */
+                        primaryHover: '#7022d4',
+                        secondary: '#FFB800', /* Amarelo da logo */
+                        secondaryHover: '#e6a600',
+                        dark: '#1a1a1a',
+                        light: '#f8f9fa'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Fonte Inter do Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Ícones -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(138, 50, 243, 0.15); }
+    </style>
+</head>
+<body class="antialiased text-gray-800">
+
+    <!-- Cabeçalho -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="#" class="flex items-center gap-2">
+                <!-- Usando a logo que você enviou -->
+                <img src="Cuponiza.png" alt="Cuponiza" class="h-10 object-contain" onerror="this.src='https://placehold.co/200x60/8A32F3/FFF?text=Cuponiza'">
+            </a>
+            
+            <div class="hidden md:flex gap-6 items-center font-medium text-gray-600">
+                <a href="#" class="hover:text-primary transition">Início</a>
+                <a href="#" class="hover:text-primary transition">Lojas</a>
+                <a href="#" class="hover:text-primary transition">Categorias</a>
+            </div>
+
+            <button class="md:hidden text-gray-600">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Seção Hero -->
+    <section class="bg-gradient-to-b from-white to-light py-16 px-4 text-center">
+        <div class="max-w-3xl mx-auto">
+            <div class="inline-flex items-center gap-2 bg-yellow-100 text-yellow-800 px-4 py-1.5 rounded-full text-sm font-semibold mb-6">
+                <i data-lucide="flame" class="w-4 h-4 text-secondary"></i>
+                Ofertas atualizadas em tempo real
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 leading-tight">
+                Economize com as <br/>
+                <span class="text-primary">Melhores Ofertas</span> da Internet
+            </h1>
+            <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+                Nosso robô encontra e publica as melhores promoções, erros de preço e grandes descontos antes de todo mundo.
+            </p>
+        </div>
+    </section>
+
+    <!-- Grid de Promoções -->
+    <main class="max-w-6xl mx-auto px-4 py-8 mb-20">
+        <div class="flex justify-between items-end mb-8 border-b pb-4">
+            <h2 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                <i data-lucide="tag" class="w-6 h-6 text-primary"></i>
+                Últimas Promoções
+            </h2>
+            <span id="contador-promos" class="text-sm text-gray-500 font-medium">Carregando...</span>
+        </div>
+
+        <!-- Onde os cards serão inseridos pelo JavaScript -->
+        <div id="grid-promocoes" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Esqueleto de carregamento -->
+            <div class="animate-pulse bg-white rounded-2xl p-4 shadow-sm h-64"></div>
+            <div class="animate-pulse bg-white rounded-2xl p-4 shadow-sm h-64"></div>
+            <div class="animate-pulse bg-white rounded-2xl p-4 shadow-sm h-64"></div>
+        </div>
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="bg-dark text-white py-12 mt-auto">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <img src="cpnz.png" alt="CPNZ" class="h-12 mx-auto mb-6 object-contain filter brightness-0 invert opacity-80" onerror="this.src='https://placehold.co/100x100/1a1a1a/FFF?text=CPNZ'">
+            <p class="text-gray-400 mb-4">© 2026 Cuponiza. Todos os direitos reservados.</p>
+            <p class="text-sm text-gray-500 max-w-xl mx-auto">
+                A Cuponiza é um agregador de ofertas. Os preços e a disponibilidade dos produtos podem mudar a qualquer momento nos sites parceiros.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Lógica JavaScript -->
+    <script>
+        // Inicializa os ícones do Lucide
+        lucide.createIcons();
+
+        // Esta é a função principal que desenha os cards na tela
+        function renderizarPromocoes(promocoes) {
+            const container = document.getElementById('grid-promocoes');
+            const contador = document.getElementById('contador-promos');
+            
+            container.innerHTML = ''; // Limpa o carregamento
+            contador.innerText = `${promocoes.length} ofertas encontradas`;
+
+            promocoes.forEach(promo => {
+                // Formata a data (ex: 2026-06-16 -> 16 Jun 2026)
+                const dataObj = new Date(promo.data);
+                const dataFormatada = dataObj.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+
+                const cardHTML = `
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 card-hover flex flex-col h-full relative overflow-hidden">
+                        
+                        <!-- Etiqueta de Desconto (Amarela) -->
+                        ${promo.desconto ? `
+                        <div class="absolute top-0 right-0 bg-secondary text-dark font-bold text-xs px-3 py-1.5 rounded-bl-lg">
+                            ${promo.desconto}
+                        </div>
+                        ` : ''}
+
+                        <!-- Loja e Data -->
+                        <div class="flex justify-between items-center mb-3 mt-2">
+                            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">${promo.loja}</span>
+                            <span class="text-xs text-gray-400 flex items-center gap-1">
+                                <i data-lucide="clock" class="w-3 h-3"></i> ${dataFormatada}
+                            </span>
+                        </div>
+
+                        <!-- Título -->
+                        <h3 class="text-lg font-bold text-gray-900 mb-2 leading-snug line-clamp-2">
+                            ${promo.titulo}
+                        </h3>
+
+                        <!-- Preço (se houver) -->
+                        ${promo.preco ? `
+                        <div class="mb-4">
+                            <span class="text-2xl font-extrabold text-primary">${promo.preco}</span>
+                        </div>
+                        ` : '<div class="mb-4 flex-grow"></div>'}
+
+                        <!-- Espaçador flex para empurrar o botão pro final -->
+                        <div class="flex-grow"></div>
+
+                        <!-- Botão -->
+                        <a href="${promo.link}" target="_blank" rel="noopener noreferrer" 
+                           class="w-full mt-4 bg-primary hover:bg-primaryHover text-white font-semibold py-3 px-4 rounded-xl text-center transition flex items-center justify-center gap-2">
+                            Ver Oferta
+                            <i data-lucide="external-link" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+                `;
+                container.innerHTML += cardHTML;
+            });
+            
+            // Recarrega os ícones para os novos elementos injetados
+            lucide.createIcons();
+        }
+
+        // Função para buscar os dados
+        async function carregarDados() {
+            try {
+                // TENTA BUSCAR O ARQUIVO JSON QUE O n8n VAI CRIAR
+                // No GitHub Pages, o n8n vai sobrescrever um arquivo 'promocoes.json' na raiz.
+                const response = await fetch('promocoes.json');
+                
+                if (!response.ok) {
+                    throw new Error('Arquivo promocoes.json não encontrado. Usando dados de teste.');
+                }
+                
+                const promocoesReais = await response.json();
+                renderizarPromocoes(promocoesReais);
+
+            } catch (erro) {
+                console.log(erro.message);
+                
+                // FALLBACK: Dados de demonstração caso o JSON do n8n ainda não exista
+                const dadosDeTeste = [
+                    {
+                        titulo: "Smart TV 55\" 4K Samsung com Inteligência Artificial",
+                        loja: "Mercado Livre",
+                        desconto: "40% OFF",
+                        preco: "R$ 2.199,00",
+                        link: "#",
+                        data: "2026-06-16T14:30:00Z"
+                    },
+                    {
+                        titulo: "Notebook Lenovo IdeaPad Ryzen 5 8GB 256GB SSD",
+                        loja: "KaBuM!",
+                        desconto: "15% OFF",
+                        preco: "R$ 1.899,00",
+                        link: "#",
+                        data: "2026-06-16T10:00:00Z"
+                    },
+                    {
+                        titulo: "iPhone 15 Pro 256GB - Menor preço dos últimos 6 meses!",
+                        loja: "Amazon",
+                        desconto: "R$ 1000 OFF",
+                        preco: "R$ 6.599,00",
+                        link: "#",
+                        data: "2026-06-15T18:20:00Z"
+                    },
+                    {
+                        titulo: "Air Fryer Mondial 4L Preta - Super Oferta Relâmpago",
+                        loja: "Magalu",
+                        desconto: "25% OFF",
+                        preco: "R$ 299,90",
+                        link: "#",
+                        data: "2026-06-15T09:15:00Z"
+                    }
+                ];
+                renderizarPromocoes(dadosDeTeste);
+            }
+        }
+
+        // Executa a busca ao carregar a página
+        window.onload = carregarDados;
+    </script>
+</body>
+</html>
